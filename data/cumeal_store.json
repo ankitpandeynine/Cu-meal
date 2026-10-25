@@ -1,0 +1,266 @@
+{
+  "menus": {
+    "2026-10-25": {
+      "date": "2026-10-25",
+      "isAvailable": true,
+      "lastUpdated": "2026-10-25T12:15:03.378Z",
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Sweet Dalia, Banana, Bread, Boiled Egg, Fat Spread Jam, Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Amritsari Chole, Khatta Meetha Pumpkin, Chapati, Sweet Lassi, Steamed Rice, Beet Cucumber Salad, Mix Pickle",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Samosa, Tea\nZakir: Namkeen, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Rusk, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Dhaba Dal, Subz Jalfreji, Chapati, Steamed Rice, Green Salad, Mix Pickle, Green Chilli",
+          "category": "dinner"
+        }
+      ]
+    },
+    "2026-10-26": {
+      "date": "2026-10-26",
+      "isAvailable": true,
+      "lastUpdated": "2026-10-25T12:15:03.378Z",
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Aloo Pyaz Paratha, Curd, Bread Butter, Tea, Fresh Fruits",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Rajma Masala, Aloo Jeera, Tawa Roti, Jeera Rice, Boondi Raita, Onion Salad",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Veg Cutlet, Tea\nZakir: Bread Pakora, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Veg Cutlet, Hot Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Shahi Paneer, Dal Tadka, Missi Roti, Steamed Rice, Gulab Jamun, Salad",
+          "category": "dinner"
+        }
+      ]
+    },
+    "2026-10-27": {
+      "date": "2026-10-27",
+      "isAvailable": true,
+      "lastUpdated": "2026-10-25T12:15:03.378Z",
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Poha with Peanuts & Sev, Boiled Eggs / Sprouts, Toast, Coffee / Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Kadhi Pakora, Aloo Methi, Chapati, Plain Basmati Rice, Mint Chutney, Papad",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Veg Spring Roll, Tea\nZakir: Patties, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Patties, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard",
+          "category": "dinner"
+        }
+      ]
+    },
+    "2026-10-28": {
+      "date": "2026-10-28",
+      "isAvailable": false,
+      "unavailableMessage": "The menu is currently being updated. Please check back shortly.",
+      "meals": [],
+      "lastUpdated": "2026-10-25T12:15:03.378Z"
+    },
+    "2026-10-30": {
+      "date": "2026-10-30",
+      "isAvailable": true,
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Paneer Stuffed Paratha, Fresh Curd, Mixed Jam Toast, Boiled Eggs, Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Amritsari Kulche Chole, Boondi Raita, Jeera Rice, Onion Rings, Lemon Pickle",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Samosa, Green Chutney, Tea\nZakir: Bread Roll, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Hot Samosa, Adrak Chai",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Kadhai Paneer, Dal Makhani, Butter Roti, Peas Rice, Hot Gulab Jamun, Salad",
+          "category": "dinner"
+        }
+      ],
+      "lastUpdated": "2026-10-25T12:15:55.487Z"
+    }
+  },
+  "events": [
+    {
+      "title": "Diwali Grand Feast & Musical DJ Night with live tandoori paneer, sweets, and festive poster",
+      "subtitle": "Special announcement from the Chandigarh University Mess Council",
+      "date": "2026-10-29",
+      "time": "07:30 PM - 10:00 PM",
+      "venue": "Central Mess Grounds & Dining Hall",
+      "category": "festival",
+      "description": "We are thrilled to announce: Diwali Grand Feast & Musical DJ Night with live tandoori paneer, sweets, and festive poster!\n\nJoin us for an unforgettable evening featuring handpicked chef specials, festive decor, and great campus vibes. All hostellers across NC, Zakir, and Girls blocks are invited. Please bring your student ID card for smooth entry.",
+      "highlights": [
+        "Chef Signature Delicacies & Fresh Tandoori Dishes",
+        "Special Festive Dessert Counter",
+        "Campus Music & Ambience Lights",
+        "Exclusive for CU Hostel Residents"
+      ],
+      "posterUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
+      "posterTheme": "festive",
+      "author": "Ankit Pandey (Hostel Admin)",
+      "id": "event-1792930541987-n1qyr",
+      "publishedAt": "2026-10-25T12:15:41.987Z"
+    },
+    {
+      "id": "event-diwali-grand-feast-2026",
+      "title": "Diwali Grand Hostel Feast & Musical DJ Night",
+      "subtitle": "Grand 7-course festive dinner with unlimited sweets and music",
+      "date": "2026-11-01",
+      "time": "07:00 PM - 10:30 PM",
+      "venue": "Central Lawn & Block 3 Grand Dining Hall",
+      "category": "festival",
+      "description": "Celebrate the Festival of Lights with our biggest hostel feast of the year! Enjoy live tandoor stations, authentic Awadhi Dum Biryani, Shahi Paneer, Kesari Rasmalai, and an open DJ dance floor under the festive lighting.",
+      "highlights": [
+        "Live Tandoor & Chaat Counters",
+        "Awadhi Dum Biryani & Shahi Paneer",
+        "Unlimited Kesari Rasmalai & Jalebi",
+        "Live DJ Setup & Ethnic Dress Code Contest",
+        "Free Entry for all CU Hostel Residents"
+      ],
+      "posterUrl": "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=1200&q=80",
+      "posterTheme": "festive",
+      "isPinned": true,
+      "publishedAt": "2026-10-25T12:15:03.378Z",
+      "author": "Ankit Pandey (Hostel Secretary)",
+      "rsvpUrl": "https://cumeal.vercel.app/rsvp"
+    },
+    {
+      "id": "event-sunday-biryani-fest",
+      "title": "Mega Sunday Special Biryani & Ice Cream Gala",
+      "subtitle": "Special weekend treat curated by the Student Mess Committee",
+      "date": "2026-11-08",
+      "time": "12:30 PM - 02:30 PM",
+      "venue": "All Campus Mess Halls (NC, Zakir, LC & Girls Wing)",
+      "category": "special-feast",
+      "description": "Get ready for Sunday delight! Savor our slow-cooked aromatic Vegetable & Soy Dum Biryani paired with refreshing Burani Raita, Salan, and Chilled Choco-Chip Cones.",
+      "highlights": [
+        "Hyderabadi Dum Cooking Technique",
+        "Garlic Mint Burani Raita",
+        "Double Ka Meetha & Choco-Chip Ice Cream",
+        "Fast-track express counters for rush management"
+      ],
+      "posterUrl": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=80",
+      "posterTheme": "foodie",
+      "isPinned": false,
+      "publishedAt": "2026-10-25T12:15:03.379Z",
+      "author": "CU Mess Welfare Council"
+    },
+    {
+      "id": "event-hpl-snack-screenings",
+      "title": "Hostel Premier League Finals Live Screening & Snacks",
+      "subtitle": "Live match on giant LED screen with hot samosas & cold drinks",
+      "date": "2026-11-12",
+      "time": "06:00 PM - 09:30 PM",
+      "venue": "Open Air Amphitheatre",
+      "category": "sports",
+      "description": "Cheer for your hostel team in the Grand Finals! Mess team will be serving piping hot paneer samosas, potato wedges, and cold drinks throughout the match.",
+      "highlights": [
+        "Giant 4K LED Screen Broadcast",
+        "Free Match-day Snack Combo",
+        "Live Commentary & Face Painting",
+        "Lucky draw coupons on entrance"
+      ],
+      "posterUrl": "https://images.unsplash.com/photo-1531415074868-036b1c57e3b0?auto=format&fit=crop&w=1200&q=80",
+      "posterTheme": "neon",
+      "isPinned": false,
+      "publishedAt": "2026-10-25T12:15:03.379Z",
+      "author": "Sports & Mess Committee"
+    }
+  ]
+}
