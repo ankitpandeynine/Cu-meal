@@ -6,9 +6,11 @@ import { Coffee, Utensils, Cookie, Moon, Sparkles, Clock } from 'lucide-react';
 
 interface MealCardProps {
   meal: MealSlot;
+  isServingNow?: boolean;
+  isUpcomingNext?: boolean;
 }
 
-export default function MealCard({ meal }: MealCardProps) {
+export default function MealCard({ meal, isServingNow = false, isUpcomingNext = false }: MealCardProps) {
   const getIcon = () => {
     const id = meal.id.toLowerCase();
     if (id.includes('breakfast')) return <Coffee className="w-5 h-5 text-amber-500" />;
@@ -21,7 +23,15 @@ export default function MealCard({ meal }: MealCardProps) {
   const lines = meal.items.split('\n');
 
   return (
-    <div className="w-full bg-white/75 dark:bg-zinc-900/65 backdrop-blur-2xl border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-5 sm:p-6 shadow-ios dark:shadow-ios-dark transition-all duration-200 hover:shadow-md">
+    <div
+      className={`w-full bg-white/75 dark:bg-zinc-900/65 backdrop-blur-2xl rounded-3xl p-5 sm:p-6 shadow-ios dark:shadow-ios-dark transition-all duration-300 ${
+        isServingNow
+          ? 'border-2 border-emerald-500/60 ring-4 ring-emerald-500/10'
+          : isUpcomingNext
+          ? 'border border-amber-500/30'
+          : 'border border-black/[0.06] dark:border-white/[0.08] hover:shadow-md'
+      }`}
+    >
       {/* Header with Title and Time Capsule */}
       <div className="flex flex-col gap-2 mb-3">
         <div className="flex items-center justify-between">
@@ -29,6 +39,17 @@ export default function MealCard({ meal }: MealCardProps) {
             <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
               {meal.name}
             </h2>
+            {isServingNow && (
+              <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 animate-pulse">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Serving Now</span>
+              </span>
+            )}
+            {isUpcomingNext && !isServingNow && (
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                Next Meal
+              </span>
+            )}
           </div>
           <div className="p-2.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/80">
             {getIcon()}
