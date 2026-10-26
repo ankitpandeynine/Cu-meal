@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MealSlot } from '@/types';
-import { Coffee, Utensils, Cookie, Moon, Sparkles } from 'lucide-react';
+import { Coffee, Utensils, Cookie, Moon, Sparkles, Clock } from 'lucide-react';
 
 interface MealCardProps {
   meal: MealSlot;
@@ -11,61 +11,66 @@ interface MealCardProps {
 export default function MealCard({ meal }: MealCardProps) {
   const getIcon = () => {
     const id = meal.id.toLowerCase();
-    if (id.includes('breakfast')) return <Coffee className="w-5 h-5 text-amber-700" />;
-    if (id.includes('lunch')) return <Utensils className="w-5 h-5 text-emerald-700" />;
-    if (id.includes('snack')) return <Cookie className="w-5 h-5 text-orange-700" />;
-    if (id.includes('dinner')) return <Moon className="w-5 h-5 text-indigo-700" />;
-    return <Sparkles className="w-5 h-5 text-sky-700" />;
+    if (id.includes('breakfast')) return <Coffee className="w-5 h-5 text-amber-500" />;
+    if (id.includes('lunch')) return <Utensils className="w-5 h-5 text-emerald-500" />;
+    if (id.includes('snack')) return <Cookie className="w-5 h-5 text-orange-500" />;
+    if (id.includes('dinner')) return <Moon className="w-5 h-5 text-indigo-400" />;
+    return <Sparkles className="w-5 h-5 text-zinc-400" />;
   };
 
-  // Split lines if there are hostel distinctions (e.g., NC: ... / Zakir: ...)
   const lines = meal.items.split('\n');
 
   return (
-    <div className="w-full bg-[#a3ecf5] hover:bg-[#97e8f3] border border-cyan-200/70 rounded-3xl p-6 shadow-sm transition-all duration-200 hover:shadow-md">
+    <div className="w-full bg-white/75 dark:bg-zinc-900/65 backdrop-blur-2xl border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-5 sm:p-6 shadow-ios dark:shadow-ios-dark transition-all duration-200 hover:shadow-md">
       {/* Header with Title and Time Capsule */}
       <div className="flex flex-col gap-2 mb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-2xl font-bold tracking-tight text-slate-950">
+            <h2 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-50">
               {meal.name}
             </h2>
           </div>
-          <div className="p-2 rounded-2xl bg-white/60 text-slate-700">
+          <div className="p-2.5 rounded-2xl bg-zinc-100/80 dark:bg-zinc-800/80">
             {getIcon()}
           </div>
         </div>
 
-        {/* Time slot pill matching screenshot */}
-        <div>
-          <span className="inline-block bg-white/70 backdrop-blur-sm text-slate-600 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
-            {meal.time}
+        {/* Minimalist Time Pill */}
+        <div className="flex items-center gap-1.5">
+          <span className="inline-flex items-center gap-1.5 bg-zinc-100 dark:bg-zinc-800/80 text-zinc-600 dark:text-zinc-300 text-[11px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+            <Clock className="w-3 h-3 text-zinc-400" />
+            <span>{meal.time}</span>
           </span>
         </div>
       </div>
 
       {/* Food Items content */}
-      <div className="text-slate-800 text-[16px] leading-relaxed font-normal mt-2 space-y-1">
+      <div className="text-zinc-800 dark:text-zinc-200 text-sm sm:text-base leading-relaxed mt-3 space-y-2">
         {lines.map((line, idx) => {
           const isHostelLabel = line.includes(':');
           if (isHostelLabel) {
             const [hostel, rest] = line.split(':');
             return (
-              <p key={idx} className="flex flex-wrap items-baseline gap-1.5">
-                <span className="font-semibold text-slate-900 bg-white/40 px-1.5 py-0.5 rounded text-sm">
-                  {hostel}:
+              <div key={idx} className="flex flex-wrap items-baseline gap-1.5">
+                <span className="font-bold text-xs uppercase px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-black/5 dark:border-white/10">
+                  {hostel.trim()}
                 </span>
-                <span>{rest}</span>
-              </p>
+                <span className="text-zinc-700 dark:text-zinc-300 font-normal">{rest.trim()}</span>
+              </div>
             );
           }
-          return <p key={idx}>{line}</p>;
+          return (
+            <p key={idx} className="font-normal text-zinc-800 dark:text-zinc-200">
+              {line}
+            </p>
+          );
         })}
       </div>
 
       {meal.notes && (
-        <div className="mt-3 pt-2 border-t border-cyan-300/40 text-xs text-slate-600 italic">
-          💡 {meal.notes}
+        <div className="mt-4 pt-3 border-t border-zinc-100 dark:border-zinc-800/80 text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
+          <span>💡</span>
+          <span>{meal.notes}</span>
         </div>
       )}
     </div>

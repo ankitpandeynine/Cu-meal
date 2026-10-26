@@ -87,51 +87,86 @@
     "2026-10-27": {
       "date": "2026-10-27",
       "isAvailable": true,
-      "lastUpdated": "2026-10-25T12:15:03.378Z",
       "meals": [
         {
           "id": "breakfast",
           "name": "Breakfast",
           "time": "07:30 AM - 09:00 AM",
-          "items": "Poha with Peanuts & Sev, Boiled Eggs / Sprouts, Toast, Coffee / Tea",
+          "items": "Poha Tea",
           "category": "breakfast"
         },
         {
           "id": "lunch",
           "name": "Lunch",
           "time": "12:00 PM - 01:45 PM",
-          "items": "Kadhi Pakora, Aloo Methi, Chapati, Plain Basmati Rice, Mint Chutney, Papad",
+          "items": "Rajma Chawal",
           "category": "lunch"
         },
         {
           "id": "snacks-boys",
           "name": "Snacks (Boys)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "NC: Veg Spring Roll, Tea\nZakir: Patties, Tea",
+          "items": "NC: Samosa, Tea\nZakir: Namkeen, Tea",
           "category": "snacks"
         },
         {
           "id": "snacks-girls",
           "name": "Snacks (Girls)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "Patties, Tea",
+          "items": "Samosa, Tea",
           "category": "snacks"
         },
         {
           "id": "dinner",
           "name": "Dinner",
           "time": "07:30 PM - 09:00 PM",
-          "items": "Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard",
+          "items": "Paneer Butter Masala",
           "category": "dinner"
         }
-      ]
+      ],
+      "lastUpdated": "2026-10-26T13:16:09.815Z"
     },
     "2026-10-28": {
       "date": "2026-10-28",
-      "isAvailable": false,
-      "unavailableMessage": "The menu is currently being updated. Please check back shortly.",
-      "meals": [],
-      "lastUpdated": "2026-10-25T12:15:03.378Z"
+      "isAvailable": true,
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Aloo Paratha",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Kadhi Rice",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Samosa, Tea\nZakir: Namkeen, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Samosa, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Dal Makhani",
+          "category": "dinner"
+        }
+      ],
+      "lastUpdated": "2026-10-26T13:16:09.815Z"
     },
     "2026-10-30": {
       "date": "2026-10-30",
@@ -261,6 +296,44 @@
       "isPinned": false,
       "publishedAt": "2026-10-25T12:15:03.379Z",
       "author": "Sports & Mess Committee"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr-1793020545657-xv87",
+      "name": "Simran Kaur",
+      "email": "simran.kaur@cuchd.in",
+      "uid": "23BCS9910",
+      "hostel": "Girls Wing (Block A/B)",
+      "year": "1st Year",
+      "department": "General",
+      "provider": "google",
+      "joinedAt": "2026-10-26T13:15:45.657Z",
+      "lastLoginAt": "2026-10-26T13:15:45.657Z"
+    },
+    {
+      "id": "user-demo-1",
+      "name": "Aarav Sharma",
+      "email": "aarav.sharma21@cuchd.in",
+      "uid": "21BCS10892",
+      "hostel": "NC Boys (Block 1)",
+      "year": "3rd Year",
+      "department": "CSE",
+      "provider": "google",
+      "joinedAt": "2026-10-24T10:15:00Z",
+      "lastLoginAt": "2026-10-26T08:30:00Z"
+    },
+    {
+      "id": "user-demo-2",
+      "name": "Diya Patel",
+      "email": "diya.patel22@cuchd.in",
+      "uid": "22BCS14520",
+      "hostel": "Girls Wing (Block C)",
+      "year": "2nd Year",
+      "department": "AI & Data Science",
+      "provider": "apple",
+      "joinedAt": "2026-10-25T14:20:00Z",
+      "lastLoginAt": "2026-10-26T09:12:00Z"
     }
   ]
 }

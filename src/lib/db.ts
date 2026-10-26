@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { DayMenu, EventPost } from '@/types';
+import { DayMenu, EventPost, UserProfile } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'cumeal_store.json');
@@ -8,6 +8,7 @@ const DB_FILE = path.join(DATA_DIR, 'cumeal_store.json');
 interface DatabaseStore {
   menus: Record<string, DayMenu>;
   events: EventPost[];
+  users: UserProfile[];
 }
 
 const DEFAULT_MENUS: Record<string, DayMenu> = {
@@ -215,10 +216,38 @@ const DEFAULT_EVENTS: EventPost[] = [
   }
 ];
 
+const DEFAULT_USERS: UserProfile[] = [
+  {
+    id: 'user-demo-1',
+    name: 'Aarav Sharma',
+    email: 'aarav.sharma21@cuchd.in',
+    uid: '21BCS10892',
+    hostel: 'NC Boys (Block 1)',
+    year: '3rd Year',
+    department: 'CSE',
+    provider: 'google',
+    joinedAt: '2026-10-24T10:15:00Z',
+    lastLoginAt: '2026-10-26T08:30:00Z',
+  },
+  {
+    id: 'user-demo-2',
+    name: 'Diya Patel',
+    email: 'diya.patel22@cuchd.in',
+    uid: '22BCS14520',
+    hostel: 'Girls Wing (Block C)',
+    year: '2nd Year',
+    department: 'AI & Data Science',
+    provider: 'apple',
+    joinedAt: '2026-10-25T14:20:00Z',
+    lastLoginAt: '2026-10-26T09:12:00Z',
+  },
+];
+
 // In-memory cache for serverless environments
 let memoryStore: DatabaseStore = {
   menus: { ...DEFAULT_MENUS },
   events: [...DEFAULT_EVENTS],
+  users: [...DEFAULT_USERS],
 };
 
 function readDb(): DatabaseStore {
@@ -229,6 +258,7 @@ function readDb(): DatabaseStore {
       memoryStore = {
         menus: { ...DEFAULT_MENUS, ...(parsed.menus || {}) },
         events: parsed.events || DEFAULT_EVENTS,
+        users: parsed.users || DEFAULT_USERS,
       };
       return memoryStore;
     }
@@ -334,3 +364,83 @@ export function deleteEvent(id: string): boolean {
   }
   return false;
 }
+
+// ---------------- BULK MENU OPERATIONS ----------------
+
+export function saveBulkMenus(dayMenus: DayMenu[]): DayMenu[] {
+  const db = readDb();
+  const saved: DayMenu[] = [];
+  for (const m of dayMenus) {
+    const updated: DayMenu = {
+      ...m,
+      isAvailable: m.isAvailable ?? true,
+      lastUpdated: new Date().toISOString(),
+    };
+    db.menus[m.date] = updated;
+    saved.push(updated);
+  }
+  writeDb(db);
+  return saved;
+}
+
+// ---------------- USER OPERATIONS ----------------
+
+export function getAllUsers(): UserProfile[] {
+  const db = readDb();
+  return [...(db.users || [])].sort(
+    (a, b) => new Date(b.lastLoginAt).getTime() - new Date(a.lastLoginAt).getTime()
+  );
+}
+
+export function saveUser(profile: Partial<UserProfile> & { email: string }): UserProfile {
+  const db = readDb();
+  if (!db.users) db.users = [];
+
+  const existingIndex = db.users.findIndex(
+    (u) => u.email.toLowerCase() === profile.email.toLowerCase() || (profile.uid && u.uid === profile.uid)
+  );
+
+  const now = new Date().toISOString();
+
+  if (existingIndex >= 0) {
+    const updated: UserProfile = {
+      ...db.users[existingIndex],
+      ...profile,
+      lastLoginAt: now,
+    };
+    db.users[existingIndex] = updated;
+    writeDb(db);
+    return updated;
+  }
+
+  const newUser: UserProfile = {
+    id: profile.id || `usr-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    name: profile.name || 'CU Hosteller',
+    email: profile.email,
+    uid: profile.uid || '',
+    hostel: profile.hostel || 'NC Boys (Block 1)',
+    year: profile.year || '1st Year',
+    department: profile.department || 'General',
+    provider: profile.provider || 'google',
+    joinedAt: now,
+    lastLoginAt: now,
+    photoUrl: profile.photoUrl,
+  };
+
+  db.users.unshift(newUser);
+  writeDb(db);
+  return newUser;
+}
+
+export function deleteUser(id: string): boolean {
+  const db = readDb();
+  if (!db.users) return false;
+  const initLen = db.users.length;
+  db.users = db.users.filter((u) => u.id !== id);
+  if (db.users.length !== initLen) {
+    writeDb(db);
+    return true;
+  }
+  return false;
+}
+

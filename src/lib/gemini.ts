@@ -226,3 +226,155 @@ Only raw JSON, no markdown backticks.
     },
   ];
 }
+
+export interface ParsedDayMenu {
+  date: string;
+  dayName: string;
+  meals: MealSlot[];
+}
+
+export async function generateBulkWeekMenuWithGemini(
+  rawScheduleText: string,
+  startDateStr?: string,
+  customApiKey?: string
+): Promise<ParsedDayMenu[]> {
+  const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+  const baseDate = startDateStr ? new Date(startDateStr) : new Date();
+
+  if (apiKey && apiKey.trim().length > 5) {
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+      const prompt = `
+You are the Chandigarh University hostel mess coordinator.
+The user is providing an entire raw multi-day or weekly food menu circular/text:
+"""
+${rawScheduleText}
+"""
+
+The starting date for this schedule is ${baseDate.toISOString().split('T')[0]}.
+Please parse the text day-by-day and return a STRICT JSON ARRAY of parsed day menu objects.
+Format:
+[
+  {
+    "date": "YYYY-MM-DD",
+    "dayName": "Monday",
+    "meals": [
+      { "id": "breakfast", "name": "Breakfast", "time": "07:30 AM - 09:00 AM", "items": "items...", "category": "breakfast" },
+      { "id": "lunch", "name": "Lunch", "time": "12:00 PM - 01:45 PM", "items": "items...", "category": "lunch" },
+      { "id": "snacks-boys", "name": "Snacks (Boys)", "time": "04:30 PM - 05:15 PM", "items": "NC: ...\\nZakir: ...", "category": "snacks" },
+      { "id": "snacks-girls", "name": "Snacks (Girls)", "time": "04:30 PM - 05:15 PM", "items": "...", "category": "snacks" },
+      { "id": "dinner", "name": "Dinner", "time": "07:30 PM - 09:00 PM", "items": "items...", "category": "dinner" }
+    ]
+  }
+]
+Only raw JSON, no markdown backticks.
+`;
+      const result = await model.generateContent(prompt);
+      const cleaned = result.response.text().replace(/```json/gi, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    } catch (err) {
+      console.warn('[Gemini Bulk Menu Parser error, using heuristic parser]:', err);
+    }
+  }
+
+  // Fallback Heuristic Parser for raw multi-day text
+  return heuristicBulkMenuParser(rawScheduleText, baseDate);
+}
+
+function heuristicBulkMenuParser(rawText: string, baseDate: Date): ParsedDayMenu[] {
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const lines = rawText.split('\n');
+  const results: ParsedDayMenu[] = [];
+
+  // Break text by days
+  let currentDay = '';
+  let currentContent: string[] = [];
+  const dayBlocks: { day: string; lines: string[] }[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const matchedDay = daysOfWeek.find((d) =>
+      new RegExp(`\\b${d}\\b`, 'i').test(trimmed.slice(0, 20))
+    );
+
+    if (matchedDay) {
+      if (currentDay) {
+        dayBlocks.push({ day: currentDay, lines: [...currentContent] });
+      }
+      currentDay = matchedDay;
+      currentContent = [trimmed];
+    } else {
+      currentContent.push(trimmed);
+    }
+  }
+
+  if (currentDay && currentContent.length > 0) {
+    dayBlocks.push({ day: currentDay, lines: currentContent });
+  }
+
+  // If no day names matched, treat lines as consecutive days starting from baseDate
+  if (dayBlocks.length === 0) {
+    const chunks = rawText.split(/(?=\d{1,2}[\/\-]\d{1,2}|day\s*\d|week)/i);
+    for (let i = 0; i < Math.min(chunks.length, 7); i++) {
+      const d = new Date(baseDate);
+      d.setDate(baseDate.getDate() + i);
+      results.push({
+        date: d.toISOString().split('T')[0],
+        dayName: daysOfWeek[d.getDay()],
+        meals: createDefaultMealSlots(chunks[i] || 'Chef special dishes'),
+      });
+    }
+    return results;
+  }
+
+  // Process matched day blocks
+  dayBlocks.forEach((block, idx) => {
+    const d = new Date(baseDate);
+    d.setDate(baseDate.getDate() + idx);
+    const textJoined = block.lines.join(' ');
+
+    // Extract meals or use smart defaults
+    const breakfast = extractMealText(textJoined, 'breakfast') || 'Poha / Dalia, Boiled Egg, Bread Jam, Tea';
+    const lunch = extractMealText(textJoined, 'lunch') || 'Dal, Seasonal Sabzi, Chapati, Steamed Rice, Salad, Pickle';
+    const snacks = extractMealText(textJoined, 'snack') || 'NC: Samosa, Tea\nZakir: Namkeen, Tea';
+    const dinner = extractMealText(textJoined, 'dinner') || 'Paneer Curry / Dhaba Dal, Jeera Rice, Tawa Roti, Dessert';
+
+    results.push({
+      date: d.toISOString().split('T')[0],
+      dayName: block.day,
+      meals: [
+        { id: 'breakfast', name: 'Breakfast', time: '07:30 AM - 09:00 AM', items: breakfast, category: 'breakfast' },
+        { id: 'lunch', name: 'Lunch', time: '12:00 PM - 01:45 PM', items: lunch, category: 'lunch' },
+        { id: 'snacks-boys', name: 'Snacks (Boys)', time: '04:30 PM - 05:15 PM', items: snacks, category: 'snacks' },
+        { id: 'snacks-girls', name: 'Snacks (Girls)', time: '04:30 PM - 05:15 PM', items: snacks.includes('\n') ? snacks.split('\n')[0].replace(/^NC:\s*/i, '') : snacks, category: 'snacks' },
+        { id: 'dinner', name: 'Dinner', time: '07:30 PM - 09:00 PM', items: dinner, category: 'dinner' },
+      ],
+    });
+  });
+
+  return results;
+}
+
+function extractMealText(text: string, mealName: string): string | null {
+  const regex = new RegExp(`${mealName}[:\\s-]+([^;\\n\\.,]+(?:,[^;\\n\\.,]+)*)`, 'i');
+  const match = text.match(regex);
+  return match ? match[1].trim() : null;
+}
+
+function createDefaultMealSlots(hint: string): MealSlot[] {
+  return [
+    { id: 'breakfast', name: 'Breakfast', time: '07:30 AM - 09:00 AM', items: 'Sweet Dalia, Bread Butter, Boiled Egg, Tea', category: 'breakfast' },
+    { id: 'lunch', name: 'Lunch', time: '12:00 PM - 01:45 PM', items: 'Rajma / Chole, Jeera Rice, Chapati, Salad', category: 'lunch' },
+    { id: 'snacks-boys', name: 'Snacks (Boys)', time: '04:30 PM - 05:15 PM', items: 'NC: Samosa, Tea\nZakir: Namkeen, Tea', category: 'snacks' },
+    { id: 'snacks-girls', name: 'Snacks (Girls)', time: '04:30 PM - 05:15 PM', items: 'Rusk, Tea', category: 'snacks' },
+    { id: 'dinner', name: 'Dinner', time: '07:30 PM - 09:00 PM', items: 'Shahi Paneer / Dhaba Dal, Steamed Rice, Tawa Roti, Dessert', category: 'dinner' },
+  ];
+}
+

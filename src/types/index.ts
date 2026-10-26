@@ -45,3 +45,31 @@ export interface GeminiEventResponse {
   event?: Partial<EventPost>;
   error?: string;
 }
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  uid: string; // Student UID e.g. 21BCS...
+  hostel: string; // e.g. "NC Boys (Hostel 1)", "Zakir Boys", "Girls Block A", "LC Wing"
+  year?: string;
+  department?: string;
+  provider: 'google' | 'apple' | 'email' | 'guest';
+  photoUrl?: string;
+  joinedAt: string;
+  lastLoginAt: string;
+}
+
+export interface BulkDayMenu {
+  date: string;
+  dayName?: string;
+  meals: MealSlot[];
+}
+
+export interface BulkWeekMenuResponse {
+  success: boolean;
+  days: BulkDayMenu[];
+  rawSummary?: string;
+  error?: string;
+}
+
