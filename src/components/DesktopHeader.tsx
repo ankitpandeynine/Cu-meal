@@ -6,12 +6,11 @@ import { NavTab } from './BottomNav';
 import { UserProfile } from '@/types';
 import {
   UtensilsCrossed,
-  CalendarDays,
+  MessageSquare,
   User,
   Sun,
   Moon,
   Lock,
-  CloudCheck,
   WifiOff,
 } from 'lucide-react';
 
@@ -20,7 +19,6 @@ interface DesktopHeaderProps {
   onChangeTab: (tab: NavTab) => void;
   user: UserProfile | null;
   onOpenAuth: () => void;
-  eventCount: number;
   isOffline: boolean;
 }
 
@@ -29,7 +27,6 @@ export default function DesktopHeader({
   onChangeTab,
   user,
   onOpenAuth,
-  eventCount,
   isOffline,
 }: DesktopHeaderProps) {
   const toggleTheme = () => {
@@ -45,38 +42,32 @@ export default function DesktopHeader({
   };
 
   return (
-    <header className="hidden md:flex w-full sticky top-0 z-30 glass-nav border-b border-black/[0.06] dark:border-white/[0.08] px-8 py-3.5 items-center justify-between transition-all">
-      {/* Brand & macOS Window Controls Aesthetic */}
+    <header className="hidden md:flex w-full sticky top-0 z-30 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-2xl border-b border-black/[0.06] dark:border-white/[0.08] px-8 py-3.5 items-center justify-between transition-all">
+      {/* Clean Brand (without the 3 mac dots) */}
       <div className="flex items-center gap-6">
-        <div className="flex items-center gap-3">
-          {/* macOS window dots */}
-          <div className="flex items-center gap-1.5 mr-1">
-            <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
+        <div
+          onClick={() => onChangeTab('meal')}
+          className="cursor-pointer flex items-center gap-2 group"
+        >
+          <div className="w-8 h-8 rounded-xl bg-black dark:bg-white text-white dark:text-black flex items-center justify-center font-black text-sm shadow-sm">
+            CU
           </div>
-
-          <div
-            onClick={() => onChangeTab('meal')}
-            className="cursor-pointer flex items-center gap-2 group"
-          >
-            <span className="font-black text-lg text-zinc-950 dark:text-white tracking-tight">
-              CU Meal
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">
-              Chandigarh University
-            </span>
-          </div>
+          <span className="font-black text-lg text-zinc-950 dark:text-white tracking-tight">
+            CU Meal
+          </span>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">
+            Hostel Portal
+          </span>
         </div>
 
-        {/* Tab Navigation items */}
-        <nav className="flex items-center gap-1 bg-zinc-100/80 dark:bg-zinc-800/80 p-1 rounded-2xl text-xs font-bold">
+        {/* Glass UI Tab Navigation Switcher */}
+        <nav className="flex items-center gap-1.5 bg-white/60 dark:bg-zinc-800/60 backdrop-blur-2xl border border-black/[0.06] dark:border-white/[0.1] p-1.5 rounded-2xl shadow-sm text-xs font-bold">
           <button
             onClick={() => onChangeTab('meal')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl transition-all duration-200 ${
               activeTab === 'meal'
-                ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
             }`}
           >
             <UtensilsCrossed className="w-3.5 h-3.5" />
@@ -84,26 +75,23 @@ export default function DesktopHeader({
           </button>
 
           <button
-            onClick={() => onChangeTab('events')}
-            className={`relative flex items-center gap-2 px-4 py-1.5 rounded-xl transition ${
-              activeTab === 'events'
-                ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+            onClick={() => onChangeTab('chat')}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl transition-all duration-200 ${
+              activeTab === 'chat'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
             }`}
           >
-            <CalendarDays className="w-3.5 h-3.5" />
-            <span>Campus Events</span>
-            {eventCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-            )}
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Mess Chat</span>
           </button>
 
           <button
             onClick={() => onChangeTab('profile')}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl transition ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-xl transition-all duration-200 ${
               activeTab === 'profile'
-                ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-sm'
-                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
             }`}
           >
             <User className="w-3.5 h-3.5" />
@@ -137,15 +125,6 @@ export default function DesktopHeader({
           <Sun className="w-4 h-4 dark:hidden" />
           <Moon className="w-4 h-4 hidden dark:block" />
         </button>
-
-        {/* Admin Portal Gateway */}
-        <Link
-          href="/admin"
-          className="flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition border border-black/5 dark:border-white/10"
-        >
-          <Lock className="w-3.5 h-3.5" />
-          <span>Admin</span>
-        </Link>
 
         {/* User Pill or Sign In Button */}
         {user ? (

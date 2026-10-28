@@ -335,5 +335,68 @@
       "joinedAt": "2026-10-25T14:20:00Z",
       "lastLoginAt": "2026-10-26T09:12:00Z"
     }
+  ],
+  "admins": [
+    {
+      "id": "admin-master",
+      "username": "ankit",
+      "password": "ankitcu21",
+      "name": "Ankit (Master Admin)",
+      "role": "master",
+      "createdAt": "2026-10-25T00:00:00Z"
+    },
+    {
+      "id": "admin-1793180843508-a8rm",
+      "username": "rahul_cu",
+      "password": "password123",
+      "name": "Rahul Sharma (Council)",
+      "role": "admin",
+      "createdAt": "2026-10-28T09:47:23.508Z"
+    }
+  ],
+  "chatMessages": [
+    {
+      "id": "msg-1",
+      "senderName": "Ankit (Mess Secretary)",
+      "senderHostel": "Mess Advisory Council",
+      "content": "Welcome to the official CU Hostel Mess Community! Check daily menus, report food issues, and share feedback here.",
+      "timestamp": "2026-10-28T04:47:02.124Z",
+      "likes": 12,
+      "isSecretary": true
+    },
+    {
+      "id": "msg-2",
+      "senderName": "Rohan Sharma",
+      "senderHostel": "NC Boys (Block 1)",
+      "content": "Today’s Amritsari Chole & Sweet Lassi in lunch was top notch! 🔥 Kudos to the kitchen staff.",
+      "timestamp": "2026-10-28T06:47:02.124Z",
+      "likes": 7
+    },
+    {
+      "id": "msg-3",
+      "senderName": "Kritika Sen",
+      "senderHostel": "Girls Wing (Block A)",
+      "content": "Are we getting hot samosas in evening snacks today or bread pakora?",
+      "timestamp": "2026-10-28T07:47:02.124Z",
+      "likes": 4
+    },
+    {
+      "id": "msg-4",
+      "senderName": "Ankit (Mess Secretary)",
+      "senderHostel": "Mess Advisory Council",
+      "content": "Yes Kritika, fresh samosas are being fried right now for both NC/Zakir and Girls Mess with hot tea!",
+      "timestamp": "2026-10-28T08:47:02.124Z",
+      "likes": 9,
+      "isSecretary": true
+    },
+    {
+      "senderName": "Test Student",
+      "senderHostel": "NC Boys",
+      "content": "Today rajma was really tasty! 👍",
+      "isSecretary": false,
+      "id": "msg-1793180829083-btyo",
+      "timestamp": "2026-10-28T09:47:09.083Z",
+      "likes": 0
+    }
   ]
 }

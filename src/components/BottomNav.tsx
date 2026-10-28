@@ -1,22 +1,22 @@
 'use client';
 
 import React from 'react';
-import { UtensilsCrossed, CalendarDays, User } from 'lucide-react';
+import { UtensilsCrossed, MessageSquare, User } from 'lucide-react';
 
-export type NavTab = 'meal' | 'events' | 'profile';
+export type NavTab = 'meal' | 'chat' | 'profile';
 
 interface BottomNavProps {
   activeTab: NavTab;
   onChangeTab: (tab: NavTab) => void;
-  eventCount?: number;
+  messageCount?: number;
 }
 
-export default function BottomNav({ activeTab, onChangeTab, eventCount }: BottomNavProps) {
+export default function BottomNav({ activeTab, onChangeTab, messageCount }: BottomNavProps) {
   return (
     <div className="fixed bottom-6 left-0 right-0 z-30 flex justify-center pointer-events-none px-4 md:hidden">
       <nav
         aria-label="Bottom Navigation"
-        className="pointer-events-auto flex items-center gap-1 p-1.5 glass-nav rounded-full shadow-2xl transition-all"
+        className="pointer-events-auto flex items-center gap-1.5 p-1.5 bg-white/75 dark:bg-zinc-900/75 backdrop-blur-3xl border border-black/[0.08] dark:border-white/[0.12] rounded-full shadow-2xl transition-all"
       >
         {/* Meal Tab */}
         <button
@@ -31,23 +31,23 @@ export default function BottomNav({ activeTab, onChangeTab, eventCount }: Bottom
           <span>Meal</span>
         </button>
 
-        {/* Events Tab */}
+        {/* Chat Tab */}
         <button
-          onClick={() => onChangeTab('events')}
+          onClick={() => onChangeTab('chat')}
           className={`relative flex items-center gap-2 py-2 px-5 rounded-full text-xs font-bold transition-all ios-active ${
-            activeTab === 'events'
+            activeTab === 'chat'
               ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm'
               : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
           }`}
         >
-          <CalendarDays className="w-4 h-4 stroke-[2.2]" />
-          <span>Events</span>
-          {eventCount !== undefined && eventCount > 0 && (
-            <span className="w-2 h-2 rounded-full bg-rose-500" />
+          <MessageSquare className="w-4 h-4 stroke-[2.2]" />
+          <span>Chat</span>
+          {messageCount !== undefined && messageCount > 0 && (
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           )}
         </button>
 
-        {/* Profile Tab */}
+        {/* Profile / Settings Tab */}
         <button
           onClick={() => onChangeTab('profile')}
           className={`flex items-center gap-2 py-2 px-5 rounded-full text-xs font-bold transition-all ios-active ${
@@ -57,7 +57,7 @@ export default function BottomNav({ activeTab, onChangeTab, eventCount }: Bottom
           }`}
         >
           <User className="w-4 h-4 stroke-[2.2]" />
-          <span>Profile</span>
+          <span>Settings</span>
         </button>
       </nav>
     </div>

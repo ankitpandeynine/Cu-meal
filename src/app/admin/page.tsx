@@ -36,18 +36,25 @@ export default function AdminPage() {
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
-  const [username, setUsername] = useState<string>('ankit');
-  const [password, setPassword] = useState<string>('ankitcu21');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [authError, setAuthError] = useState<string>('');
   const [loggingIn, setLoggingIn] = useState<boolean>(false);
 
   // Active Admin Tab
   const [adminTab, setAdminTab] = useState<
-    'bulk-gemini' | 'gemini-event' | 'menu-editor' | 'events-list' | 'users' | 'pipeline'
+    'bulk-gemini' | 'gemini-event' | 'menu-editor' | 'events-list' | 'users' | 'admins' | 'pipeline'
   >('bulk-gemini');
 
   // Notification Toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  // ------------------ ADMIN TEAM STATE ------------------
+  const [adminsList, setAdminsList] = useState<any[]>([]);
+  const [loadingAdmins, setLoadingAdmins] = useState<boolean>(false);
+  const [newAdminUsername, setNewAdminUsername] = useState<string>('');
+  const [newAdminPassword, setNewAdminPassword] = useState<string>('');
+  const [newAdminName, setNewAdminName] = useState<string>('');
 
   // ------------------ GEMINI BULK WEEKLY MENU STATE ------------------
   const [rawWeekText, setRawWeekText] = useState<string>(
@@ -128,6 +135,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
       loadMenuForDate(menuDate);
       loadEvents();
       loadUsers();
+      loadAdmins();
     }
   }, [isAuthenticated]);
 
@@ -143,18 +151,81 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
       });
       const data = await res.json();
       if (!res.ok) {
-        setAuthError(data.error || 'Login failed');
+        setAuthError(data.error || 'Invalid credentials');
       } else {
         setIsAuthenticated(true);
-        showToast('Welcome back, Ankit! Admin mode unlocked.');
+        showToast(`Welcome back, ${data.user || 'Admin'}!`);
         loadMenuForDate(menuDate);
         loadEvents();
         loadUsers();
+        loadAdmins();
       }
     } catch (err: any) {
       setAuthError('Network error connecting to login API');
     } finally {
       setLoggingIn(false);
+    }
+  };
+
+  const loadAdmins = async () => {
+    setLoadingAdmins(true);
+    try {
+      const res = await fetch('/api/admin/accounts');
+      const data = await res.json();
+      if (data.admins) {
+        setAdminsList(data.admins);
+      }
+    } catch (err) {
+      console.warn('Failed to load admin accounts');
+    } finally {
+      setLoadingAdmins(false);
+    }
+  };
+
+  const handleAddAdmin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminUsername.trim() || !newAdminPassword.trim()) {
+      showToast('Username and password are required', 'error');
+      return;
+    }
+    try {
+      const res = await fetch('/api/admin/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: newAdminUsername,
+          password: newAdminPassword,
+          name: newAdminName || newAdminUsername,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || 'Failed to create admin', 'error');
+      } else {
+        showToast(`✓ Admin "${newAdminUsername}" created successfully!`);
+        setNewAdminUsername('');
+        setNewAdminPassword('');
+        setNewAdminName('');
+        loadAdmins();
+      }
+    } catch (err) {
+      showToast('Network error creating admin', 'error');
+    }
+  };
+
+  const handleDeleteAdmin = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to remove admin access for ${name}?`)) return;
+    try {
+      const res = await fetch(`/api/admin/accounts?id=${id}`, { method: 'DELETE' });
+      const data = await res.json();
+      if (!res.ok) {
+        showToast(data.error || 'Failed to delete admin', 'error');
+      } else {
+        showToast(`Admin ${name} removed.`);
+        loadAdmins();
+      }
+    } catch (err) {
+      showToast('Error deleting admin', 'error');
     }
   };
 
@@ -467,7 +538,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
               CU Meal Admin
             </h1>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-              Authorized access for Mess Secretary Ankit
+              Authorized Hostel Mess Administration
             </p>
           </div>
 
@@ -489,7 +560,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white font-medium"
-                placeholder="ankit"
+                placeholder="Enter admin username"
               />
             </div>
 
@@ -503,7 +574,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white font-medium"
-                placeholder="ankitcu21"
+                placeholder="••••••••"
               />
             </div>
 
@@ -565,7 +636,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
             </h1>
           </div>
           <p className="text-[11px] text-zinc-400 font-medium">
-            Secretary Ankit • Full Control
+            Hostel Mess Administration • Full Control
           </p>
         </div>
 
@@ -591,7 +662,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
 
       {/* Tab Switcher */}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-5">
-        <div className="grid grid-cols-2 sm:grid-cols-6 gap-1 p-1 bg-zinc-200/70 dark:bg-zinc-800/80 rounded-2xl text-xs font-bold text-zinc-600 dark:text-zinc-400">
+        <div className="grid grid-cols-2 sm:grid-cols-7 gap-1 p-1 bg-zinc-200/70 dark:bg-zinc-800/80 rounded-2xl text-xs font-bold text-zinc-600 dark:text-zinc-400">
           <button
             onClick={() => setAdminTab('bulk-gemini')}
             className={`py-2 px-2 rounded-xl transition text-center truncate ${
@@ -620,7 +691,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
                 : 'hover:text-zinc-950 dark:hover:text-white'
             }`}
           >
-            🎉 Gemini Event & Poster
+            🎉 Gemini Event
           </button>
           <button
             onClick={() => setAdminTab('users')}
@@ -631,6 +702,16 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
             }`}
           >
             👥 Students ({usersList.length})
+          </button>
+          <button
+            onClick={() => setAdminTab('admins')}
+            className={`py-2 px-2 rounded-xl transition text-center truncate ${
+              adminTab === 'admins'
+                ? 'bg-white dark:bg-zinc-900 text-black dark:text-white shadow-sm'
+                : 'hover:text-zinc-950 dark:hover:text-white'
+            }`}
+          >
+            🔐 Admin Team ({adminsList.length})
           </button>
           <button
             onClick={() => setAdminTab('events-list')}
@@ -1294,7 +1375,159 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
         )}
 
         {/* ======================================================== */}
-        {/* TAB 6: VERCEL PIPELINE INFO                              */}
+        {/* TAB 6: ADMIN TEAM MANAGEMENT                             */}
+        {/* ======================================================== */}
+        {adminTab === 'admins' && (
+          <div className="space-y-6">
+            <div className="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-2xl border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 shadow-ios dark:shadow-ios-dark space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-2xl bg-black dark:bg-white text-white dark:text-black">
+                    <Key className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-zinc-950 dark:text-white">
+                      Hostel Mess Administration Team
+                    </h2>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                      Add and manage administrators. Any administrator created here has full permission to publish weekly menus, parse schedules with Gemini, create event posters, and review student data.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={loadAdmins}
+                  className="p-2 rounded-xl text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition"
+                  title="Refresh admin list"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Add New Admin Form */}
+              <form onSubmit={handleAddAdmin} className="bg-zinc-50/80 dark:bg-zinc-800/40 p-4 rounded-2xl border border-zinc-200/60 dark:border-zinc-700/60 space-y-3">
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 block">
+                  Add New Administrator Account
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-zinc-400 block mb-1">
+                      Username *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. mess_member"
+                      value={newAdminUsername}
+                      onChange={(e) => setNewAdminUsername(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-zinc-400 block mb-1">
+                      Password *
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      placeholder="Create secure password"
+                      value={newAdminPassword}
+                      onChange={(e) => setNewAdminPassword(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-zinc-400 block mb-1">
+                      Display Name / Role
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Council Member"
+                      value={newAdminName}
+                      onChange={(e) => setNewAdminName(e.target.value)}
+                      className="w-full text-xs p-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-1">
+                  <button
+                    type="submit"
+                    className="py-2.5 px-5 rounded-xl bg-black dark:bg-white text-white dark:text-black font-bold text-xs shadow-sm hover:opacity-90 active:scale-95 transition flex items-center gap-1.5"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    <span>Create Admin Account</span>
+                  </button>
+                </div>
+              </form>
+
+              {/* Admins Table */}
+              <div className="pt-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-zinc-400 block mb-2">
+                  Active Administrators ({adminsList.length})
+                </span>
+
+                {loadingAdmins ? (
+                  <div className="py-8 flex justify-center text-zinc-400">
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                  </div>
+                ) : adminsList.length === 0 ? (
+                  <p className="text-xs text-zinc-400 py-4">No secondary admins configured yet.</p>
+                ) : (
+                  <div className="divide-y divide-zinc-100 dark:divide-zinc-800 border border-zinc-200/60 dark:border-zinc-800 rounded-2xl overflow-hidden bg-white/60 dark:bg-zinc-900/40">
+                    {adminsList.map((adm) => (
+                      <div key={adm.id} className="p-3.5 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-xl bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center font-bold text-zinc-700 dark:text-zinc-300">
+                            {adm.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold text-zinc-900 dark:text-white">
+                                {adm.name}
+                              </span>
+                              <span className="text-[10px] font-mono text-zinc-400">
+                                @{adm.username}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
+                                adm.role === 'master'
+                                  ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
+                                  : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400'
+                              }`}>
+                                {adm.role}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-zinc-400">
+                              Added: {adm.createdAt ? new Date(adm.createdAt).toLocaleDateString() : 'System Default'}
+                            </span>
+                          </div>
+                        </div>
+
+                        {adm.role !== 'master' && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteAdmin(adm.id, adm.name)}
+                            className="p-2 text-zinc-400 hover:text-rose-600 transition"
+                            title="Remove Admin"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ======================================================== */}
+        {/* TAB 7: VERCEL PIPELINE INFO                              */}
         {/* ======================================================== */}
         {adminTab === 'pipeline' && (
           <div className="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-2xl rounded-3xl p-6 shadow-ios dark:shadow-ios-dark border border-black/[0.06] dark:border-white/[0.08] space-y-4">

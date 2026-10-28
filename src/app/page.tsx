@@ -8,12 +8,10 @@ import MenuUnavailable from '@/components/MenuUnavailable';
 import BottomNav, { NavTab } from '@/components/BottomNav';
 import DesktopHeader from '@/components/DesktopHeader';
 import ProfileView from '@/components/ProfileView';
-import EventCard from '@/components/EventCard';
-import EventModal from '@/components/EventModal';
+import CommunityChat from '@/components/CommunityChat';
 import AuthModal from '@/components/AuthModal';
-import { DayMenu, EventPost, UserProfile } from '@/types';
-import { Sparkles, Utensils, RefreshCw, Filter, BellRing, WifiOff, Clock, Flame, CheckCircle2 } from 'lucide-react';
-import Link from 'next/link';
+import { DayMenu, UserProfile } from '@/types';
+import { RefreshCw, WifiOff, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function HomePage() {
   // Adapt to the actual current date on the device!
@@ -24,9 +22,6 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<NavTab>('meal');
   const [menuData, setMenuData] = useState<DayMenu | null>(null);
   const [loadingMenu, setLoadingMenu] = useState<boolean>(true);
-  const [events, setEvents] = useState<EventPost[]>([]);
-  const [loadingEvents, setLoadingEvents] = useState<boolean>(true);
-  const [selectedEvent, setSelectedEvent] = useState<EventPost | null>(null);
   const [hostelFilter, setHostelFilter] = useState<'all' | 'boys' | 'girls'>('all');
 
   // User Auth State
@@ -194,29 +189,9 @@ export default function HomePage() {
     }
   };
 
-  // Fetch Events
-  const fetchEvents = async () => {
-    setLoadingEvents(true);
-    try {
-      const res = await fetch('/api/events');
-      const data = await res.json();
-      if (data.events) {
-        setEvents(data.events);
-      }
-    } catch (err) {
-      console.error('Failed to load events:', err);
-    } finally {
-      setLoadingEvents(false);
-    }
-  };
-
   useEffect(() => {
     fetchMenu(selectedDate);
   }, [selectedDate]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('cumeal_user');
@@ -237,13 +212,12 @@ export default function HomePage() {
 
   return (
     <div className="w-full min-h-screen flex flex-col bg-[#f8fafc] dark:bg-[#000000] text-[#09090b] dark:text-[#f4f4f5] transition-colors duration-300">
-      {/* Desktop macOS Header */}
+      {/* Desktop Header */}
       <DesktopHeader
         activeTab={activeTab}
         onChangeTab={setActiveTab}
         user={currentUser}
         onOpenAuth={() => setShowAuthModal(true)}
-        eventCount={events.length}
         isOffline={isOffline}
       />
 
@@ -256,12 +230,23 @@ export default function HomePage() {
             <div className="w-full max-w-7xl mx-auto md:px-8 md:py-6 flex-1 flex flex-col md:flex-row gap-6">
               {/* Left Column (Desktop) / Top Section (Mobile) */}
               <div className="w-full md:w-[360px] md:shrink-0 flex flex-col md:gap-4">
-                {/* Expandable Calendar Header */}
-                <div className="md:rounded-3xl md:overflow-hidden md:border md:border-black/[0.06] md:dark:border-white/[0.08] md:shadow-ios md:dark:shadow-ios-dark">
+                {/* Desktop Version: Always show full complete calendar on left */}
+                <div className="hidden md:block md:rounded-3xl md:overflow-hidden md:border md:border-black/[0.08] md:dark:border-white/[0.1] md:shadow-ios md:dark:shadow-ios-dark">
                   <CalendarBar
                     selectedDate={selectedDate}
                     onSelectDate={setSelectedDate}
                     isOffline={isOffline}
+                    alwaysShowFullCalendar={true}
+                  />
+                </div>
+
+                {/* Mobile Version: Top expandable calendar bar (auto-closes on scroll) */}
+                <div className="block md:hidden">
+                  <CalendarBar
+                    selectedDate={selectedDate}
+                    onSelectDate={setSelectedDate}
+                    isOffline={isOffline}
+                    alwaysShowFullCalendar={false}
                   />
                 </div>
 
@@ -294,9 +279,9 @@ export default function HomePage() {
                   </div>
                 )}
 
-                {/* Wing Filter */}
+                {/* Hostel Wing Glass Switcher */}
                 <div className="px-4 sm:px-6 md:px-0 pt-2 md:pt-0">
-                  <div className="bg-white/80 dark:bg-zinc-900/60 backdrop-blur-xl p-2.5 rounded-2xl border border-black/[0.06] dark:border-white/[0.08] shadow-sm flex items-center justify-between">
+                  <div className="bg-white/70 dark:bg-zinc-900/60 backdrop-blur-2xl p-2.5 rounded-2xl border border-black/[0.08] dark:border-white/[0.12] shadow-sm flex items-center justify-between">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-zinc-400 pl-1">
                       Hostel Wing:
                     </span>
@@ -409,50 +394,13 @@ export default function HomePage() {
         )}
 
         {/* ======================================================== */}
-        {/* TAB 2: CAMPUS EVENTS                                     */}
+        {/* TAB 2: COMMUNITY LIVE MESS CHAT                          */}
         {/* ======================================================== */}
-        {activeTab === 'events' && (
-          <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-6 animate-fade-in flex-1 pb-24 md:pb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-zinc-950 dark:text-white flex items-center gap-2">
-                  <span>Campus Feasts & Notices</span>
-                  <Sparkles className="w-5 h-5 text-amber-500" />
-                </h1>
-                <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-                  Festivals, DJ nights, and special dinners curated with Gemini AI
-                </p>
-              </div>
-
-              <Link
-                href="/admin"
-                className="text-xs font-bold text-white bg-black dark:bg-white dark:text-black px-4 py-2 rounded-2xl shadow-sm hover:opacity-90 active:scale-95 transition"
-              >
-                + Add Event
-              </Link>
-            </div>
-
-            {loadingEvents ? (
-              <div className="py-24 flex flex-col items-center justify-center text-zinc-400 gap-3">
-                <RefreshCw className="w-8 h-8 animate-spin text-zinc-900 dark:text-white" />
-                <p className="text-xs font-medium">Loading campus announcements...</p>
-              </div>
-            ) : events.length === 0 ? (
-              <div className="py-24 text-center">
-                <p className="text-zinc-500 font-medium">No upcoming events right now.</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {events.map((event) => (
-                  <EventCard
-                    key={event.id}
-                    event={event}
-                    onOpenDetails={(ev) => setSelectedEvent(ev)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+        {activeTab === 'chat' && (
+          <CommunityChat
+            currentUser={currentUser}
+            onOpenAuth={() => setShowAuthModal(true)}
+          />
         )}
 
         {/* ======================================================== */}
@@ -471,13 +419,6 @@ export default function HomePage() {
       <BottomNav
         activeTab={activeTab}
         onChangeTab={setActiveTab}
-        eventCount={events.length}
-      />
-
-      {/* Event Details Dialog Modal */}
-      <EventModal
-        event={selectedEvent}
-        onClose={() => setSelectedEvent(null)}
       />
 
       {/* User Login & Student UID Onboarding Modal */}

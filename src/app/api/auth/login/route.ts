@@ -12,20 +12,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isValid = verifyCredentials(username, password);
+    const authResult = verifyCredentials(username, password);
 
-    if (!isValid) {
+    if (!authResult.success) {
       return NextResponse.json(
-        { error: 'Invalid username or password. Default is ankit / ankitcu21' },
+        { error: 'Invalid username or password' },
         { status: 401 }
       );
     }
 
-    const cookieData = createSessionCookie();
+    const cookieData = createSessionCookie(authResult.name);
     const res = NextResponse.json({
       success: true,
       message: 'Logged in successfully',
-      user: username.trim(),
+      user: authResult.name || username.trim(),
+      role: authResult.role || 'admin',
     });
 
     res.cookies.set(cookieData.name, cookieData.value, cookieData.options);

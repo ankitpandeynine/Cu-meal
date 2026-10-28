@@ -73,3 +73,24 @@ export interface BulkWeekMenuResponse {
   error?: string;
 }
 
+export interface ChatMessage {
+  id: string;
+  senderName: string;
+  senderUid?: string;
+  senderHostel?: string;
+  content: string;
+  timestamp: string;
+  likes: number;
+  isSecretary?: boolean;
+}
+
+export interface AdminAccount {
+  id: string;
+  username: string;
+  password: string;
+  name: string;
+  role: 'master' | 'admin';
+  createdAt: string;
+}
+
+

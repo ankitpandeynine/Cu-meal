@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   format,
   addDays,
@@ -22,20 +22,32 @@ import {
   ChevronUp,
   Sparkles,
   WifiOff,
-  CloudCheck,
 } from 'lucide-react';
 
 interface CalendarBarProps {
   selectedDate: string; // YYYY-MM-DD
   onSelectDate: (date: string) => void;
   isOffline?: boolean;
+  alwaysShowFullCalendar?: boolean; // For desktop left sidebar!
 }
 
-export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: CalendarBarProps) {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+export default function CalendarBar({
+  selectedDate,
+  onSelectDate,
+  isOffline,
+  alwaysShowFullCalendar = false,
+}: CalendarBarProps) {
+  const [isExpanded, setIsExpanded] = useState<boolean>(alwaysShowFullCalendar);
   const [currentMonth, setCurrentMonth] = useState<Date>(() => parseISO(selectedDate));
   const parsedSelected = parseISO(selectedDate);
   const today = new Date();
+
+  // If alwaysShowFullCalendar is true (desktop), keep expanded
+  useEffect(() => {
+    if (alwaysShowFullCalendar) {
+      setIsExpanded(true);
+    }
+  }, [alwaysShowFullCalendar]);
 
   // Touch handlers for swipe up/down gesture on mobile
   const touchStartY = useRef<number | null>(null);
@@ -45,18 +57,37 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
+    if (alwaysShowFullCalendar) return;
     if (touchStartY.current === null) return;
     const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-    // Swipe down to expand (if delta > 40px)
-    if (deltaY > 40 && !isExpanded) {
+    // Swipe down to expand (delta > 35px)
+    if (deltaY > 35 && !isExpanded) {
       setIsExpanded(true);
     }
-    // Swipe up to collapse (if delta < -40px)
-    if (deltaY < -40 && isExpanded) {
+    // Swipe up to collapse (delta < -35px)
+    if (deltaY < -35 && isExpanded) {
       setIsExpanded(false);
     }
     touchStartY.current = null;
   };
+
+  // Auto-close calendar on mobile when user scrolls the page up/down
+  useEffect(() => {
+    if (alwaysShowFullCalendar) return;
+
+    let lastScrollY = window.scrollY;
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // If user scrolled up or scrolled down past 40px, collapse calendar
+      if (Math.abs(currentScrollY - lastScrollY) > 30 && isExpanded) {
+        setIsExpanded(false);
+      }
+      lastScrollY = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isExpanded, alwaysShowFullCalendar]);
 
   // 14-day sliding window for horizontal carousel
   const daysCarousel = Array.from({ length: 14 }).map((_, index) => {
@@ -86,35 +117,43 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
     <div
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className="w-full pt-3 pb-2 px-4 sm:px-6 border-b border-black/5 dark:border-white/10 glass-surface sticky top-0 z-20 transition-all duration-300"
+      className="w-full pt-3 pb-2 px-4 sm:px-5 glass-surface sticky top-0 z-20 transition-all duration-300"
     >
       {/* Top Header Row */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          {/* Clickable Date Title to toggle calendar */}
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center gap-2 group text-left ios-active"
-            title="Click to expand/collapse full calendar"
-          >
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-white">
-                {isToday ? "Today's Menu" : format(parsedSelected, 'EEEE')}
+          {alwaysShowFullCalendar ? (
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-black tracking-tight text-zinc-950 dark:text-white">
+                Hostel Calendar
               </h1>
-              <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
+          ) : (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="flex items-center gap-2 group text-left ios-active"
+              title="Click to expand/collapse full calendar"
+            >
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-xl sm:text-2xl font-black tracking-tight text-zinc-950 dark:text-white">
+                  {isToday ? "Today's Menu" : format(parsedSelected, 'EEEE')}
+                </h1>
+                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              </div>
 
-            <span className="p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition">
-              {isExpanded ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </span>
-          </button>
+              <span className="p-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition">
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4" />
+                ) : (
+                  <ChevronDown className="w-4 h-4" />
+                )}
+              </span>
+            </button>
+          )}
         </div>
 
-        {/* Right side controls: Tomorrow shortcut + Offline indicator */}
+        {/* Right side controls */}
         <div className="flex items-center gap-2">
           {isOffline && (
             <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
@@ -135,14 +174,15 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
 
       {/* Date display subheader */}
       <div className="flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400 mb-2">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="font-semibold text-zinc-800 dark:text-zinc-200 hover:text-rose-500 dark:hover:text-rose-400 flex items-center gap-1.5"
-        >
+        <span className="font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-1.5">
           <CalendarIcon className="w-3.5 h-3.5 text-zinc-400" />
           <span>{format(parsedSelected, 'd MMMM yyyy')}</span>
-          <span className="text-[10px] text-zinc-400">({isExpanded ? 'tap to close' : 'tap to expand'})</span>
-        </button>
+          {!alwaysShowFullCalendar && (
+            <span className="text-[10px] text-zinc-400 font-normal">
+              ({isExpanded ? 'scroll to close' : 'tap to expand'})
+            </span>
+          )}
+        </span>
 
         <div className="flex items-center gap-1">
           <button
@@ -169,9 +209,9 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
       </div>
 
       {/* ======================================================== */}
-      {/* EXPANDED MONTH/GRID CALENDAR VIEW                        */}
+      {/* EXPANDED FULL CALENDAR GRID (Always visible on desktop)  */}
       {/* ======================================================== */}
-      {isExpanded ? (
+      {isExpanded || alwaysShowFullCalendar ? (
         <div className="pt-2 pb-3 animate-fade-in space-y-3">
           {/* Month switcher */}
           <div className="flex items-center justify-between px-1">
@@ -215,7 +255,9 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
                   key={dayIso}
                   onClick={() => {
                     onSelectDate(dayIso);
-                    setIsExpanded(false); // Collapse smoothly per request!
+                    if (!alwaysShowFullCalendar) {
+                      setIsExpanded(false); // Collapse on phone when date chosen
+                    }
                   }}
                   className={`flex flex-col items-center justify-center p-2 rounded-2xl text-xs font-semibold transition-all ios-active ${
                     isSelected
@@ -226,7 +268,6 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
                   }`}
                 >
                   <span>{format(day, 'd')}</span>
-                  {/* Menu indicator dot */}
                   <span
                     className={`w-1 h-1 rounded-full mt-0.5 ${
                       isSelected
@@ -239,20 +280,22 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
             })}
           </div>
 
-          {/* Swipe-up handle to close */}
-          <div
-            onClick={() => setIsExpanded(false)}
-            className="flex flex-col items-center justify-center pt-2 cursor-pointer group"
-          >
-            <div className="w-10 h-1 bg-zinc-300 dark:bg-zinc-700 rounded-full group-hover:bg-zinc-400 transition" />
-            <span className="text-[10px] text-zinc-400 font-semibold mt-1">
-              Swipe up to close calendar & view meals
-            </span>
-          </div>
+          {/* Phone-only swipe up notice */}
+          {!alwaysShowFullCalendar && (
+            <div
+              onClick={() => setIsExpanded(false)}
+              className="flex flex-col items-center justify-center pt-2 cursor-pointer group"
+            >
+              <div className="w-10 h-1 bg-zinc-300 dark:bg-zinc-700 rounded-full group-hover:bg-zinc-400 transition" />
+              <span className="text-[10px] text-zinc-400 font-semibold mt-1">
+                Scroll up or tap here to collapse
+              </span>
+            </div>
+          )}
         </div>
       ) : (
         /* ======================================================== */
-        /* COMPACT HORIZONTAL DATE CAROUSEL (Default View)         */
+        /* COMPACT HORIZONTAL DATE CAROUSEL (Phone Collapsed View)  */
         /* ======================================================== */
         <div className="flex items-center justify-between gap-1 overflow-x-auto no-scrollbar py-1">
           {daysCarousel.map((day) => {
@@ -271,10 +314,18 @@ export default function CalendarBar({ selectedDate, onSelectDate, isOffline }: C
                     : 'hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-medium'
                 }`}
               >
-                <span className={`text-base ${isSelected ? 'text-white dark:text-black font-black' : 'text-zinc-900 dark:text-zinc-100'}`}>
+                <span
+                  className={`text-base ${
+                    isSelected ? 'text-white dark:text-black font-black' : 'text-zinc-900 dark:text-zinc-100'
+                  }`}
+                >
                   {dayNumber}
                 </span>
-                <span className={`text-[10px] uppercase font-semibold ${isSelected ? 'text-zinc-300 dark:text-zinc-700' : 'text-zinc-400'}`}>
+                <span
+                  className={`text-[10px] uppercase font-semibold ${
+                    isSelected ? 'text-zinc-300 dark:text-zinc-700' : 'text-zinc-400'
+                  }`}
+                >
                   {dayName}
                 </span>
               </button>

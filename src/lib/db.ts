@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { DayMenu, EventPost, UserProfile, MealSlot } from '@/types';
+import { DayMenu, EventPost, UserProfile, MealSlot, ChatMessage, AdminAccount } from '@/types';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const DB_FILE = path.join(DATA_DIR, 'cumeal_store.json');
@@ -9,6 +9,8 @@ interface DatabaseStore {
   menus: Record<string, DayMenu>;
   events: EventPost[];
   users: UserProfile[];
+  admins: AdminAccount[];
+  chatMessages: ChatMessage[];
 }
 
 const DEFAULT_MENUS: Record<string, DayMenu> = {
@@ -243,11 +245,61 @@ const DEFAULT_USERS: UserProfile[] = [
   },
 ];
 
+const DEFAULT_ADMINS: AdminAccount[] = [
+  {
+    id: 'admin-master',
+    username: 'ankit',
+    password: 'ankitcu21',
+    name: 'Ankit (Master Admin)',
+    role: 'master',
+    createdAt: '2026-10-25T00:00:00Z',
+  },
+];
+
+const DEFAULT_CHAT_MESSAGES: ChatMessage[] = [
+  {
+    id: 'msg-1',
+    senderName: 'Ankit (Mess Secretary)',
+    senderHostel: 'Mess Advisory Council',
+    content: 'Welcome to the official CU Hostel Mess Community! Check daily menus, report food issues, and share feedback here.',
+    timestamp: new Date(Date.now() - 3600000 * 5).toISOString(),
+    likes: 12,
+    isSecretary: true,
+  },
+  {
+    id: 'msg-2',
+    senderName: 'Rohan Sharma',
+    senderHostel: 'NC Boys (Block 1)',
+    content: 'Today’s Amritsari Chole & Sweet Lassi in lunch was top notch! 🔥 Kudos to the kitchen staff.',
+    timestamp: new Date(Date.now() - 3600000 * 3).toISOString(),
+    likes: 7,
+  },
+  {
+    id: 'msg-3',
+    senderName: 'Kritika Sen',
+    senderHostel: 'Girls Wing (Block A)',
+    content: 'Are we getting hot samosas in evening snacks today or bread pakora?',
+    timestamp: new Date(Date.now() - 3600000 * 2).toISOString(),
+    likes: 4,
+  },
+  {
+    id: 'msg-4',
+    senderName: 'Ankit (Mess Secretary)',
+    senderHostel: 'Mess Advisory Council',
+    content: 'Yes Kritika, fresh samosas are being fried right now for both NC/Zakir and Girls Mess with hot tea!',
+    timestamp: new Date(Date.now() - 3600000 * 1).toISOString(),
+    likes: 9,
+    isSecretary: true,
+  },
+];
+
 // In-memory cache for serverless environments
 let memoryStore: DatabaseStore = {
   menus: { ...DEFAULT_MENUS },
   events: [...DEFAULT_EVENTS],
   users: [...DEFAULT_USERS],
+  admins: [...DEFAULT_ADMINS],
+  chatMessages: [...DEFAULT_CHAT_MESSAGES],
 };
 
 function readDb(): DatabaseStore {
@@ -259,6 +311,8 @@ function readDb(): DatabaseStore {
         menus: { ...DEFAULT_MENUS, ...(parsed.menus || {}) },
         events: parsed.events || DEFAULT_EVENTS,
         users: parsed.users || DEFAULT_USERS,
+        admins: parsed.admins || DEFAULT_ADMINS,
+        chatMessages: parsed.chatMessages || DEFAULT_CHAT_MESSAGES,
       };
       return memoryStore;
     }
@@ -751,4 +805,93 @@ export function deleteUser(id: string): boolean {
   }
   return false;
 }
+
+// ---------------- ADMIN ACCOUNT OPERATIONS ----------------
+
+export function getAllAdmins(): AdminAccount[] {
+  const db = readDb();
+  return db.admins || DEFAULT_ADMINS;
+}
+
+export function saveAdmin(account: Omit<AdminAccount, 'id' | 'createdAt'> & { id?: string }): AdminAccount {
+  const db = readDb();
+  if (!db.admins) db.admins = [...DEFAULT_ADMINS];
+
+  const id = account.id || `admin-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+  const existingIdx = db.admins.findIndex(
+    (a) => a.id === id || a.username.toLowerCase() === account.username.toLowerCase()
+  );
+
+  const newAdmin: AdminAccount = {
+    id,
+    username: account.username.trim().toLowerCase(),
+    password: account.password,
+    name: account.name || 'Mess Admin',
+    role: account.role || 'admin',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (existingIdx >= 0) {
+    db.admins[existingIdx] = { ...db.admins[existingIdx], ...newAdmin };
+  } else {
+    db.admins.push(newAdmin);
+  }
+
+  writeDb(db);
+  return newAdmin;
+}
+
+export function deleteAdmin(id: string): boolean {
+  const db = readDb();
+  if (!db.admins) return false;
+  const target = db.admins.find((a) => a.id === id);
+  if (!target || target.role === 'master' || target.username === 'ankit') {
+    return false; // Protect master admin
+  }
+  db.admins = db.admins.filter((a) => a.id !== id);
+  writeDb(db);
+  return true;
+}
+
+// ---------------- CHAT MESSAGE OPERATIONS ----------------
+
+export function getAllChatMessages(): ChatMessage[] {
+  const db = readDb();
+  return (db.chatMessages || DEFAULT_CHAT_MESSAGES).sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  );
+}
+
+export function addChatMessage(msg: Omit<ChatMessage, 'id' | 'timestamp' | 'likes'>): ChatMessage {
+  const db = readDb();
+  if (!db.chatMessages) db.chatMessages = [...DEFAULT_CHAT_MESSAGES];
+
+  const newMsg: ChatMessage = {
+    ...msg,
+    id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    timestamp: new Date().toISOString(),
+    likes: 0,
+  };
+
+  db.chatMessages.push(newMsg);
+  // Keep last 150 messages
+  if (db.chatMessages.length > 150) {
+    db.chatMessages = db.chatMessages.slice(-150);
+  }
+  writeDb(db);
+  return newMsg;
+}
+
+export function likeChatMessage(id: string): ChatMessage | null {
+  const db = readDb();
+  if (!db.chatMessages) return null;
+  const msg = db.chatMessages.find((m) => m.id === id);
+  if (msg) {
+    msg.likes = (msg.likes || 0) + 1;
+    writeDb(db);
+    return msg;
+  }
+  return null;
+}
+
 
