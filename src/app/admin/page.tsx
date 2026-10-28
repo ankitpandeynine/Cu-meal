@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { DayMenu, EventPost, MealSlot, UserProfile } from '@/types';
 import PosterGenerator from '@/components/PosterGenerator';
+import GeminiMenuStudio from '@/components/GeminiMenuStudio';
 
 export default function AdminPage() {
   // Auth state
@@ -43,8 +44,8 @@ export default function AdminPage() {
 
   // Active Admin Tab
   const [adminTab, setAdminTab] = useState<
-    'bulk-gemini' | 'gemini-event' | 'menu-editor' | 'events-list' | 'users' | 'admins' | 'pipeline'
-  >('bulk-gemini');
+    'gemini-vision' | 'bulk-gemini' | 'gemini-event' | 'menu-editor' | 'events-list' | 'users' | 'admins' | 'pipeline'
+  >('gemini-vision');
 
   // Notification Toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -662,7 +663,17 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
 
       {/* Tab Switcher */}
       <div className="max-w-6xl mx-auto px-4 sm:px-8 pt-5">
-        <div className="grid grid-cols-2 sm:grid-cols-7 gap-1 p-1 bg-zinc-200/70 dark:bg-zinc-800/80 rounded-2xl text-xs font-bold text-zinc-600 dark:text-zinc-400">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-1 p-1 bg-zinc-200/70 dark:bg-zinc-800/80 rounded-2xl text-xs font-bold text-zinc-600 dark:text-zinc-400">
+          <button
+            onClick={() => setAdminTab('gemini-vision')}
+            className={`py-2 px-2 rounded-xl transition text-center truncate ${
+              adminTab === 'gemini-vision'
+                ? 'bg-black text-white dark:bg-white dark:text-black shadow-sm font-black'
+                : 'hover:text-zinc-950 dark:hover:text-white'
+            }`}
+          >
+            📸 Picture & Date AI
+          </button>
           <button
             onClick={() => setAdminTab('bulk-gemini')}
             className={`py-2 px-2 rounded-xl transition text-center truncate ${
@@ -671,7 +682,7 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
                 : 'hover:text-zinc-950 dark:hover:text-white'
             }`}
           >
-            ✨ Bulk Gemini Week
+            ✨ Text Week Parser
           </button>
           <button
             onClick={() => setAdminTab('menu-editor')}
@@ -737,6 +748,16 @@ Dinner: Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard`
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6">
+        {/* ======================================================== */}
+        {/* TAB 0: GEMINI VISION PICTURE TO WEEK & DATE MODIFIER    */}
+        {/* ======================================================== */}
+        {adminTab === 'gemini-vision' && (
+          <GeminiMenuStudio
+            apiKey={geminiApiKey}
+            onApiKeyChange={setGeminiApiKey}
+            onMenuUpdated={() => loadMenuForDate(menuDate)}
+          />
+        )}
         {/* ======================================================== */}
         {/* TAB 1: GEMINI BULK WEEKLY MENU PARSER (User Requested)  */}
         {/* ======================================================== */}

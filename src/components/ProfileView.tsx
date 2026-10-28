@@ -251,6 +251,35 @@ export default function ProfileView({ user, onOpenAuth, onLogout }: ProfileViewP
             <ChevronRight className="w-4 h-4 text-zinc-400" />
           </button>
 
+          {/* Gemini AI Menu Studio Gateway */}
+          <Link
+            href="/admin/gemini"
+            className="w-full flex items-center justify-between p-3.5 hover:bg-zinc-50/70 dark:hover:bg-zinc-800/50 rounded-2xl transition text-left group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-500 to-rose-500 flex items-center justify-center text-white shadow-sm">
+                <Sparkles className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-zinc-900 dark:text-zinc-100 font-bold text-xs sm:text-sm block">
+                    Gemini AI Menu Studio
+                  </span>
+                  <span className="text-[9px] font-black uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-300 px-1.5 py-0.2 rounded-md">
+                    Vision & Date Editor
+                  </span>
+                </div>
+                <span className="text-[10px] text-zinc-400">
+                  Attach menu photo for whole week or instruct AI to modify any date
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-1 text-xs font-bold text-zinc-600 dark:text-zinc-400">
+              <span>Open</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </Link>
+
           {/* Admin Portal Gateway */}
           <Link
             href="/admin"
@@ -262,10 +291,10 @@ export default function ProfileView({ user, onOpenAuth, onLogout }: ProfileViewP
               </div>
               <div>
                 <span className="text-zinc-900 dark:text-zinc-100 font-bold text-xs sm:text-sm block">
-                  Admin Portal
+                  Admin Portal & Team
                 </span>
                 <span className="text-[10px] text-zinc-400">
-                  Bulk Gemini menu parser & student records
+                  Manage admin accounts, registered students & campus notices
                 </span>
               </div>
             </div>

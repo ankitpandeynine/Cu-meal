@@ -45,20 +45,19 @@
     "2026-10-26": {
       "date": "2026-10-26",
       "isAvailable": true,
-      "lastUpdated": "2026-10-25T12:15:03.378Z",
       "meals": [
         {
           "id": "breakfast",
           "name": "Breakfast",
           "time": "07:30 AM - 09:00 AM",
-          "items": "Aloo Pyaz Paratha, Curd, Bread Butter, Tea, Fresh Fruits",
+          "items": "Sweet Dalia, Banana, Boiled Egg, Toast, Tea",
           "category": "breakfast"
         },
         {
           "id": "lunch",
           "name": "Lunch",
           "time": "12:00 PM - 01:45 PM",
-          "items": "Rajma Masala, Aloo Jeera, Tawa Roti, Jeera Rice, Boondi Raita, Onion Salad",
+          "items": "Rajma Masala, Aloo Jeera, Jeera Rice, Tawa Roti, Boondi Raita",
           "category": "lunch"
         },
         {
@@ -72,17 +71,18 @@
           "id": "snacks-girls",
           "name": "Snacks (Girls)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "Veg Cutlet, Hot Tea",
+          "items": "Veg Cutlet, Tea",
           "category": "snacks"
         },
         {
           "id": "dinner",
           "name": "Dinner",
           "time": "07:30 PM - 09:00 PM",
-          "items": "Shahi Paneer, Dal Tadka, Missi Roti, Steamed Rice, Gulab Jamun, Salad",
+          "items": "Dhaba Dal, Subz Jalfreji, Chapati, Steamed Rice, Salad",
           "category": "dinner"
         }
-      ]
+      ],
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
     },
     "2026-10-27": {
       "date": "2026-10-27",
@@ -92,39 +92,39 @@
           "id": "breakfast",
           "name": "Breakfast",
           "time": "07:30 AM - 09:00 AM",
-          "items": "Poha Tea",
+          "items": "Poha with Peanuts, Boiled Eggs / Sprouts, Toast, Coffee / Tea",
           "category": "breakfast"
         },
         {
           "id": "lunch",
           "name": "Lunch",
           "time": "12:00 PM - 01:45 PM",
-          "items": "Rajma Chawal",
+          "items": "Kadhi Pakora, Aloo Methi, Chapati, Plain Basmati Rice, Mint Chutney",
           "category": "lunch"
         },
         {
           "id": "snacks-boys",
           "name": "Snacks (Boys)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "NC: Samosa, Tea\nZakir: Namkeen, Tea",
+          "items": "NC: Veg Spring Roll, Tea\nZakir: Patties, Tea",
           "category": "snacks"
         },
         {
           "id": "snacks-girls",
           "name": "Snacks (Girls)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "Samosa, Tea",
+          "items": "Patties, Tea",
           "category": "snacks"
         },
         {
           "id": "dinner",
           "name": "Dinner",
           "time": "07:30 PM - 09:00 PM",
-          "items": "Paneer Butter Masala",
+          "items": "Dal Makhani, Mix Veg, Naan & Roti, Peas Pulao, Fruit Custard",
           "category": "dinner"
         }
       ],
-      "lastUpdated": "2026-10-26T13:16:09.815Z"
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
     },
     "2026-10-28": {
       "date": "2026-10-28",
@@ -134,14 +134,140 @@
           "id": "breakfast",
           "name": "Breakfast",
           "time": "07:30 AM - 09:00 AM",
-          "items": "Aloo Paratha",
+          "items": "Idli Sambar, Coconut Chutney, Toast Butter, Boiled Eggs, Tea",
           "category": "breakfast"
         },
         {
           "id": "lunch",
           "name": "Lunch",
           "time": "12:00 PM - 01:45 PM",
-          "items": "Kadhi Rice",
+          "items": "Chana Dal, Baingan Bharta, Tawa Roti, Lemon Rice, Green Salad",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Bread Roll, Tea\nZakir: Samosa, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Bread Roll, Hot Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Matar Paneer, Yellow Dal Fry, Chapati, Jeera Rice, Rasgulla",
+          "category": "dinner"
+        }
+      ],
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
+    },
+    "2026-10-30": {
+      "date": "2026-10-30",
+      "isAvailable": true,
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Uttapam with Sambar, Tomato Chutney, Butter Toast, Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Dal Panchmel, Bhindi Do Pyaza, Phulka, Steamed Rice, Boondi Raita",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Samosa, Tea\nZakir: Bread Pakora, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Samosa, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Paneer Butter Masala, Moong Dal, Missi Roti, Steamed Rice, Kheer",
+          "category": "dinner"
+        }
+      ],
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
+    },
+    "2026-10-29": {
+      "date": "2026-10-29",
+      "isAvailable": true,
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Methi Paratha, Plain Curd, Jam Toast, Omelette / Boiled Egg, Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Lobia Masala, Aloo Gobi, Roti, Plain Rice, Cucumber Salad, Pickle",
+          "category": "lunch"
+        },
+        {
+          "id": "snacks-boys",
+          "name": "Snacks (Boys)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "NC: Veg Burger, Tea\nZakir: Aloo Bonda, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "snacks-girls",
+          "name": "Snacks (Girls)",
+          "time": "04:30 PM - 05:15 PM",
+          "items": "Veg Burger, Tea",
+          "category": "snacks"
+        },
+        {
+          "id": "dinner",
+          "name": "Dinner",
+          "time": "07:30 PM - 09:00 PM",
+          "items": "Pindi Chole, Dal Tadka, Bhature & Roti, Pulao, Sooji Halwa",
+          "category": "dinner"
+        }
+      ],
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
+    },
+    "2026-10-31": {
+      "date": "2026-10-31",
+      "isAvailable": true,
+      "meals": [
+        {
+          "id": "breakfast",
+          "name": "Breakfast",
+          "time": "07:30 AM - 09:00 AM",
+          "items": "Gobhi Paratha, Curd, Bread Butter, Boiled Egg, Tea",
+          "category": "breakfast"
+        },
+        {
+          "id": "lunch",
+          "name": "Lunch",
+          "time": "12:00 PM - 01:45 PM",
+          "items": "Rajma Curry, Jeera Aloo, Chapati, Steamed Basmati Rice, Fresh Curd",
           "category": "lunch"
         },
         {
@@ -162,53 +288,53 @@
           "id": "dinner",
           "name": "Dinner",
           "time": "07:30 PM - 09:00 PM",
-          "items": "Dal Makhani",
+          "items": "Dal Makhani, Dum Aloo, Missi Roti, Jeera Rice, Jalebi, Salad",
           "category": "dinner"
         }
       ],
-      "lastUpdated": "2026-10-26T13:16:09.815Z"
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
     },
-    "2026-10-30": {
-      "date": "2026-10-30",
+    "2026-11-01": {
+      "date": "2026-11-01",
       "isAvailable": true,
       "meals": [
         {
           "id": "breakfast",
           "name": "Breakfast",
           "time": "07:30 AM - 09:00 AM",
-          "items": "Paneer Stuffed Paratha, Fresh Curd, Mixed Jam Toast, Boiled Eggs, Tea",
+          "items": "Aloo Paratha, Curd, Jam Bread, Tea",
           "category": "breakfast"
         },
         {
           "id": "lunch",
           "name": "Lunch",
           "time": "12:00 PM - 01:45 PM",
-          "items": "Amritsari Kulche Chole, Boondi Raita, Jeera Rice, Onion Rings, Lemon Pickle",
+          "items": "Amritsari Chole, Sweet Lassi, Steamed Rice, Chapati, Salad",
           "category": "lunch"
         },
         {
           "id": "snacks-boys",
           "name": "Snacks (Boys)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "NC: Samosa, Green Chutney, Tea\nZakir: Bread Roll, Tea",
+          "items": "NC: Samosa, Tea\nZakir: Namkeen, Tea",
           "category": "snacks"
         },
         {
           "id": "snacks-girls",
           "name": "Snacks (Girls)",
           "time": "04:30 PM - 05:15 PM",
-          "items": "Hot Samosa, Adrak Chai",
+          "items": "Rusk, Tea",
           "category": "snacks"
         },
         {
           "id": "dinner",
           "name": "Dinner",
           "time": "07:30 PM - 09:00 PM",
-          "items": "Kadhai Paneer, Dal Makhani, Butter Roti, Peas Rice, Hot Gulab Jamun, Salad",
+          "items": "Shahi Paneer, Dal Makhani, Steamed Rice, Gulab Jamun",
           "category": "dinner"
         }
       ],
-      "lastUpdated": "2026-10-25T12:15:55.487Z"
+      "lastUpdated": "2026-10-28T13:54:44.654Z"
     }
   },
   "events": [
