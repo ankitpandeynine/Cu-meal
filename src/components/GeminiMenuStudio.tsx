@@ -49,6 +49,7 @@ export default function GeminiMenuStudio({
   const [autoPublishVision, setAutoPublishVision] = useState<boolean>(true);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState<boolean>(false);
   const [parsedWeekDays, setParsedWeekDays] = useState<ParsedDay[]>([]);
+  const [detectedDateRange, setDetectedDateRange] = useState<string | null>(null);
   const [visionMessage, setVisionMessage] = useState<string | null>(null);
 
   // ---------------- STATE: DATE-SPECIFIC MODIFIER ----------------
@@ -136,6 +137,7 @@ export default function GeminiMenuStudio({
       }
 
       setParsedWeekDays(data.days || []);
+      setDetectedDateRange(data.detectedDateRange || null);
       setVisionMessage(data.message || `✓ Parsed ${data.days?.length || 0} days successfully!`);
       if (data.isSaved && onMenuUpdated) {
         onMenuUpdated();

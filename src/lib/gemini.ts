@@ -378,16 +378,21 @@ function createDefaultMealSlots(hint: string): MealSlot[] {
   ];
 }
 
+export interface ParseMenuImageResult {
+  days: ParsedDayMenu[];
+  detectedDateRange?: string;
+}
+
 /**
- * GEMINI VISION: Parse an uploaded photo of a mess timetable chart
- * and return the complete schedule day-by-day for the entire week.
+ * GEMINI VISION: Parse an uploaded clicked photo of a mess timetable chart,
+ * auto-detect dates given in the plan, and bifurcate all meal slots day-by-day.
  */
 export async function parseMenuImageWithGemini(
   imageBase64: string,
   mimeType: string = 'image/jpeg',
   startDateStr?: string,
   customApiKey?: string
-): Promise<ParsedDayMenu[]> {
+): Promise<ParseMenuImageResult> {
   const apiKey = customApiKey || process.env.GEMINI_API_KEY;
   const baseDate = startDateStr ? new Date(startDateStr) : new Date();
   const cleanBase64 = imageBase64.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
@@ -400,30 +405,36 @@ export async function parseMenuImageWithGemini(
       const prompt = `
 You are an expert AI mess schedule reader for Chandigarh University (CU) Hostel and Mess Council.
 Analyze this photo of a food menu chart / weekly mess timetable circular.
-Carefully read the text day-by-day (e.g. Monday to Sunday).
-Extract all 5 meal slots for each day shown in the image:
-1. Breakfast (07:30 AM - 09:00 AM)
-2. Lunch (12:00 PM - 01:45 PM)
-3. Snacks (Boys) (04:30 PM - 05:15 PM) with "NC: <snack>, Tea\\nZakir: <snack>, Tea" format if separate, otherwise single line
-4. Snacks (Girls) (04:30 PM - 05:15 PM)
-5. Dinner (07:30 PM - 09:00 PM)
 
-The starting date for this schedule is ${baseDate.toISOString().split('T')[0]}.
-Return a STRICT JSON ARRAY of parsed day menu objects in this format:
-[
-  {
-    "date": "YYYY-MM-DD",
-    "dayName": "Monday",
-    "meals": [
-      { "id": "breakfast", "name": "Breakfast", "time": "07:30 AM - 09:00 AM", "items": "...", "category": "breakfast" },
-      { "id": "lunch", "name": "Lunch", "time": "12:00 PM - 01:45 PM", "items": "...", "category": "lunch" },
-      { "id": "snacks-boys", "name": "Snacks (Boys)", "time": "04:30 PM - 05:15 PM", "items": "...", "category": "snacks" },
-      { "id": "snacks-girls", "name": "Snacks (Girls)", "time": "04:30 PM - 05:15 PM", "items": "...", "category": "snacks" },
-      { "id": "dinner", "name": "Dinner", "time": "07:30 PM - 09:00 PM", "items": "...", "category": "dinner" }
-    ]
-  }
-]
-Do not include any conversational text or markdown codeblocks, only valid raw JSON.
+1. CRITICAL: Look closely for any dates or date ranges printed anywhere on the image (e.g. in the title/header like "W.E.F. 27/10/2026 to 02/11/2026", or column/row headers like "27-Oct", "28/10", "Mon 27", etc.).
+- If explicit dates are visible, use those exact calendar dates in "YYYY-MM-DD" format.
+- If only day names (e.g. Monday, Tuesday...) are given without specific dates, anchor the week starting from ${baseDate.toISOString().split('T')[0]}.
+
+2. BIFURCATION: Carefully bifurcate every single day into its 5 distinct meal slots:
+- Breakfast (07:30 AM - 09:00 AM): List all morning breakfast items, parathas/dalia/poha, eggs/curd, bread, tea/coffee.
+- Lunch (12:00 PM - 01:45 PM): List dal, main sabzi/curry, chapati/roti, rice, salad, raita, pickle.
+- Snacks (Boys) (04:30 PM - 05:15 PM): Bifurcate NC Boys vs Zakir Boys if indicated in the photo (e.g. "NC: Samosa, Tea\\nZakir: Bread Pakora, Tea").
+- Snacks (Girls) (04:30 PM - 05:15 PM): Girls Wing evening snack & tea.
+- Dinner (07:30 PM - 09:00 PM): Dinner curries, dal, breads, rice, salad, and any sweet/dessert (e.g. Gulab Jamun, Kheer, Custard).
+
+Return a STRICT JSON OBJECT with this schema:
+{
+  "detectedDateRange": "string summary (e.g. '27 Oct 2026 – 02 Nov 2026' or 'Weekly Schedule')",
+  "days": [
+    {
+      "date": "YYYY-MM-DD",
+      "dayName": "Monday",
+      "meals": [
+        { "id": "breakfast", "name": "Breakfast", "time": "07:30 AM - 09:00 AM", "items": "...", "category": "breakfast" },
+        { "id": "lunch", "name": "Lunch", "time": "12:00 PM - 01:45 PM", "items": "...", "category": "lunch" },
+        { "id": "snacks-boys", "name": "Snacks (Boys)", "time": "04:30 PM - 05:15 PM", "items": "...", "category": "snacks" },
+        { "id": "snacks-girls", "name": "Snacks (Girls)", "time": "04:30 PM - 05:15 PM", "items": "...", "category": "snacks" },
+        { "id": "dinner", "name": "Dinner", "time": "07:30 PM - 09:00 PM", "items": "...", "category": "dinner" }
+      ]
+    }
+  ]
+}
+Only valid raw JSON, without markdown codeblocks.
 `;
 
       const result = await model.generateContent([
@@ -443,8 +454,17 @@ Do not include any conversational text or markdown codeblocks, only valid raw JS
         .trim();
 
       const parsed = JSON.parse(cleaned);
+      if (parsed && Array.isArray(parsed.days) && parsed.days.length > 0) {
+        return {
+          days: parsed.days,
+          detectedDateRange: parsed.detectedDateRange || 'Extracted from photo',
+        };
+      }
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        return {
+          days: parsed,
+          detectedDateRange: 'Extracted from photo',
+        };
       }
     } catch (err) {
       console.warn('[Gemini Vision Menu Parser Error, falling back to smart schedule]:', err);
@@ -464,7 +484,10 @@ Do not include any conversational text or markdown codeblocks, only valid raw JS
       meals: getFallbackMealsForDay(dayIndex),
     });
   }
-  return results;
+  return {
+    days: results,
+    detectedDateRange: `${results[0].date} to ${results[results.length - 1].date}`,
+  };
 }
 
 /**

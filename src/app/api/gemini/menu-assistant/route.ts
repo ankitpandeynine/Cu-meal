@@ -26,12 +26,15 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const parsedDays = await parseMenuImageWithGemini(
+      const result = await parseMenuImageWithGemini(
         imageBase64,
         mimeType || 'image/jpeg',
         startDate,
         apiKey
       );
+
+      const parsedDays = Array.isArray(result) ? result : result.days;
+      const detectedDateRange = Array.isArray(result) ? undefined : result.detectedDateRange;
 
       let savedCount = 0;
       if (autoSave && parsedDays.length > 0) {
@@ -48,6 +51,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         success: true,
         days: parsedDays,
+        detectedDateRange,
         savedCount,
         isSaved: savedCount > 0,
         message: savedCount > 0

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cumeal-v2-cache';
+const CACHE_NAME = 'cumeal-v3-offline-cache';
 const STATIC_ASSETS = ['/', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
@@ -20,7 +20,23 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Network first for APIs, with cache fallback
+  // For app navigation (e.g. user opens PWA from iPhone home screen while offline)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match('/') || caches.match(event.request))
+    );
+    return;
+  }
+
+  // Network first for APIs with cache fallback
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
       fetch(event.request)
@@ -36,7 +52,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Stale while revalidate for static pages
+  // Stale while revalidate for static pages and assets
   event.respondWith(
     caches.match(event.request).then((cached) => {
       const networkFetch = fetch(event.request)
